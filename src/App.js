@@ -1,36 +1,63 @@
-import React, { useState } from 'react';
-import Menu from './Menu';
-import Categories from './Categories';
-import data from './data';
-const allCategories =['All',...new Set(data.map((data)=> data.category))] 
-  console.log(allCategories);
+import React, { useEffect, useState } from 'react'
 
-  
-const App=()=> {
-  const [menuItems, setMenuItems] = useState(data);
-  const [category, setCategories] = useState(allCategories);
 
-  const filterItems = (categlog) => {
-    if (categlog === 'All') {
-      setMenuItems(data);
-      return;
-    }
-    const newItems = data.filter((currElement) => currElement.category === categlog);
-    setMenuItems(newItems);
-  };
+const url = "https://course-api.com/react-tabs-project"
 
+const App = () => {
+  const [loading,setLoading] = useState(true);
+  const [job ,setJob] = useState([]);
+  const [value, setValue] = useState(0);
+
+  const fetchJobs = async () =>{
+    const response = await fetch(url);
+    const newJobs  = await response.json();
+    setJob(newJobs);
+    setLoading(false);
+  }
+  useEffect(()=>{
+fetchJobs();
+  },[])
+
+  if(loading){
+    return(
+      <h1>Loading...</h1>
+    )
+  }
+
+  const {company,dates,duties,title} = job[value];
   return (
-    <main>
-      <section className="menu section">
-        <div className="title">
-          <h2 className='text-center font-bold text-3xl'>Our Menu</h2>
-          <div className="underline"></div>
-        </div>
-        <Categories category={category} filterItems={filterItems} />
-        <Menu items={menuItems} />
-      </section>
-    </main>
-  );
+    <div className=''>
+    <h1 className='text-center font-bold text-3xl'>EXPERIENCE</h1>
+{job.map((item,index)=>{
+return(
+  /* set button values */
+  <button className=' px-5 py-3 font-semibold text-lg flex' 
+  key={item.id} 
+  onClick={()=>setValue(index)
+  
+  }>
+<div className='bg-gray-600 w-32 text-center text-white p-2 font-medium'>{item.company}</div>
+
+
+  </button>
+  
+)
+  
+})}
+  {/* set info   */}
+  <h1 className=' font-medium'>{title}</h1>
+  <h1 className=' font-medium'>{company}</h1>
+  <p className=' font-medium'>{dates}</p>
+  {duties.map((item,index)=>{
+return(
+<div key={item}>
+{item}
+</div>
+)
+  })}
+
+    </div>
+  )
 }
 
-export default App;
+export default App
