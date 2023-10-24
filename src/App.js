@@ -1,63 +1,48 @@
-import React, { useEffect, useState } from 'react'
-
-
-const url = "https://course-api.com/react-tabs-project"
+import React, { useState } from "react";
+import data from "./data";
 
 const App = () => {
-  const [loading,setLoading] = useState(true);
-  const [job ,setJob] = useState([]);
-  const [value, setValue] = useState(0);
+  const [count, setCount] = useState(0);
+  const [paragrapgh, setParagrapgh] = useState([]);
 
-  const fetchJobs = async () =>{
-    const response = await fetch(url);
-    const newJobs  = await response.json();
-    setJob(newJobs);
-    setLoading(false);
-  }
-  useEffect(()=>{
-fetchJobs();
-  },[])
-
-  if(loading){
-    return(
-      <h1>Loading...</h1>
-    )
-  }
-
-  const {company,dates,duties,title} = job[value];
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    let amount = parseInt(count)
+    console.log(typeof count);
+    if(amount<=0){
+      amount = 1;
+    }
+    if(amount>9){
+      amount = 9;
+    }
+    setParagrapgh(data.slice(0,amount));
+  };
   return (
-    <div className=''>
-    <h1 className='text-center font-bold text-3xl'>EXPERIENCE</h1>
-{job.map((item,index)=>{
-return(
-  /* set button values */
-  <button className=' px-5 py-3 font-semibold text-lg flex' 
-  key={item.id} 
-  onClick={()=>setValue(index)
-  
-  }>
-<div className='bg-gray-600 w-32 text-center text-white p-2 font-medium'>{item.company}</div>
-
-
-  </button>
-  
-)
-  
-})}
-  {/* set info   */}
-  <h1 className=' font-medium'>{title}</h1>
-  <h1 className=' font-medium'>{company}</h1>
-  <p className=' font-medium'>{dates}</p>
-  {duties.map((item,index)=>{
-return(
-<div key={item}>
-{item}
-</div>
-)
-  })}
-
+    <div className="text-center text-2xl font-semibold my-5">
+      <form onSubmit={handleSubmit}>
+        <label htmlFor="amount">Paragrapgh</label>
+        <input
+          type="number"
+          name="amount"
+          id="amount"
+          value={count}
+          onChange={(e) => setCount(e.target.value)}
+          className="text-center mx-5 w-24 bg-slate-100 rounded-md"
+        />
+        <button
+          type="submit"
+          className="bg-green-500 text-white p-2 rounded-md"
+        >
+          Generate
+        </button>
+      </form>
+      <div>
+        {paragrapgh.map((item, index) => {
+          return <p className="font-normal" key={index}>{item}</p>;
+        })}
+      </div>
     </div>
-  )
-}
+  );
+};
 
-export default App
+export default App;
